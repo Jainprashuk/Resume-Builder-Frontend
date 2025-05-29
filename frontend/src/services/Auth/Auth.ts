@@ -1,3 +1,5 @@
+import { json } from "stream/consumers";
+
 export const login = async (email: string, password: string) => {
   const response = await fetch(`${process.env.NEXT_PUBLIC_LOCALE_BACKEND_API_AUTH_URL}/login/`, {
     method: "POST",
@@ -11,7 +13,7 @@ export const login = async (email: string, password: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to login");
+    return response.json()
   }
 
   const data = await response.json();
@@ -31,7 +33,7 @@ export const register = async (email: string, password: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to register");
+    return response.json()
   }
 
   const data = await response.json();
@@ -49,7 +51,7 @@ export const verifyToken = async (token: string) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to verify token");
+    return response.json()
   }
 
   const data = await response.json();
@@ -65,9 +67,21 @@ const logout = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to logout");
+    return response.json()
   }
 
   const data = await response.json();
   return data;
+};
+
+export const verifyOtp = async (email: string, otp: string, password: string) => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_LOCALE_BACKEND_API_AUTH_URL}/verify-otp/`, {
+    method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp, password }),
+    
+  });
+
+
+  return response.json();
 };

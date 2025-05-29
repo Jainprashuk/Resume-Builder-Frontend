@@ -34,7 +34,7 @@ export default function Page() {
 
       setIsLoading(true);
       login(credentials.email, credentials.password).then((response) => {
-        if (response.status === 200) {
+        if (response.status_code === 200) {
           toast.success("Login successful! Redirecting...");
           localStorage.setItem("token", response.data.token);
           router.push("/home");

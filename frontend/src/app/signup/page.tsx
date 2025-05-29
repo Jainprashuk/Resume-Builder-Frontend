@@ -9,119 +9,188 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { register } from "../../services/Auth/Auth";
+import { register , verifyOtp } from "../../services/Auth/Auth";
 import { toast } from "react-toastify";
 import { BackgroundBeams } from "../../components/ui/background-beams";
 import Loader from "@/components/Loader";
 
 export default function Page() {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: "",
+    otp: "",
+  });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setIsLoading(true);
-    register(credentials.email, credentials.password).then((response) => {
-      if (response.status === 201) {
-        toast.success("Registration successful! Please log in.");
-        router.push("/login");
-      } else {
-        toast.error(response.message || "Registration failed.");
-      }
-    }).catch((error) => {
-      toast.error("Registration failed. Please try again.");
-    }).finally(() => {
-      setIsLoading(false);
-    });
-    
+  
+    if (!showOtp) {
+      // First step: Register
+      register(credentials.email, credentials.password)
+        .then((response) => {
+
+          if (response.status_code === 200) {
+            toast.success("OTP sent to your email!");
+            setShowOtp(true);
+          } else {
+            toast.error(response.message || "Registration failed.");
+          }
+        })
+        .catch((error) => {
+          toast.error("Registration failed. Please try again.");
+          console.error(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      // Second step: Verify OTP
+      verifyOtp(credentials.email, credentials.otp, credentials.password)
+        .then((response) => {
+          if (response.status_code === 201) {
+            toast.success("Registration complete! Redirecting... login now");
+            router.push("/login"); // or wherever you want
+          } else {
+            toast.error(response.message || "OTP verification failed.");
+          }
+        })
+        .catch((error) => {
+          toast.error("OTP verification failed. Try again.");
+          console.error(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
+  
 
   return (
     <>
-    
-    {
-      isLoading ? <Loader /> : <div className="relative min-h-screen flex items-center justify-center bg-neutral-950 text-white px-4">
-      <div className="w-full max-w-md rounded-xl bg-neutral-900/60 backdrop-blur border border-neutral-700 p-8 shadow-2xl z-10">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-3xl font-bold text-center mb-2">Create Account 🚀</h2>
-          <p className="text-neutral-400 text-center text-sm mb-4">
-            Sign up to get started with your dashboard
-          </p>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="relative min-h-screen flex items-center justify-center bg-neutral-950 text-white px-4">
+          <div className="w-full max-w-md rounded-xl bg-neutral-900/60 backdrop-blur border border-neutral-700 p-8 shadow-2xl z-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <h2 className="text-3xl font-bold text-center mb-2">
+                Create Account 🚀
+              </h2>
+              <p className="text-neutral-400 text-center text-sm mb-4">
+                Sign up to get started with your dashboard
+              </p>
 
-          <LabelInputContainer>
-            <Label htmlFor="email" className="text-white">
-              Email Address
-            </Label>
-            <Input
-              id="email"
-              placeholder="projectmayhem@fc.com"
-              type="email"
-              className="bg-neutral-800 text-white placeholder-neutral-500"
-              value={credentials.email}
-              onChange={(e) =>
-                setCredentials({ ...credentials, email: e.target.value })
-              }
-            />
-          </LabelInputContainer>
+              <LabelInputContainer>
+                <Label htmlFor="email" className="text-white">
+                  Email Address
+                </Label>
+                <Input
+                  id="email"
+                  placeholder="projectmayhem@fc.com"
+                  type="email"
+                  className="bg-neutral-800 text-white placeholder-neutral-500"
+                  value={credentials.email}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
+                />
+              </LabelInputContainer>
 
-          <LabelInputContainer>
-            <Label htmlFor="password" className="text-white">
-              Password
-            </Label>
-            <Input
-              id="password"
-              placeholder="••••••••"
-              type="password"
-              className="bg-neutral-800 text-white placeholder-neutral-500"
-              value={credentials.password}
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
-            />
-          </LabelInputContainer>
+              <LabelInputContainer>
+                <Label htmlFor="password" className="text-white">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  placeholder="••••••••"
+                  type="password"
+                  className="bg-neutral-800 text-white placeholder-neutral-500"
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
+                />
+              </LabelInputContainer>
+              {showOtp && (
+                <div className="flex flex-col items-center justify-center mt-8">
+                  <h2 className="text-2xl md:text-3xl font-semibold text-white text-center mb-2">
+                    Check your email
+                  </h2>
+                  <p className="text-neutral-400 text-center text-sm max-w-sm mb-6">
+                    We’ve sent a One-Time Password (OTP) to your email. Please
+                    enter it below to continue.
+                  </p>
 
-          <button
-            className="group relative w-full rounded-md bg-gradient-to-br from-zinc-700 to-zinc-900 px-4 py-2 text-white font-semibold shadow-md hover:from-zinc-600 hover:to-zinc-800 transition duration-300"
-            type="submit"
-          >
-            Sign Up &rarr;
-            <BottomGradient />
-          </button>
+                  <div className="w-full max-w-xs">
+                    <LabelInputContainer>
+                      <Label
+                        htmlFor="otp"
+                        className="text-sm text-neutral-300 mb-1"
+                      >
+                        OTP
+                      </Label>
+                      <Input
+                        id="otp"
+                        placeholder="Enter 6-digit code"
+                        type="text"
+                        maxLength={6}
+                        className="bg-neutral-800 border border-neutral-700 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+                        value={credentials.otp}
+                        onChange={(e) =>
+                          setCredentials({
+                            ...credentials,
+                            otp: e.target.value,
+                          })
+                        }
+                      />
+                    </LabelInputContainer>
+                  </div>
+                </div>
+              )}
 
-          <p className="text-neutral-400 text-center text-sm mt-4">
-            Already have an account?{" "}
-            <span
-              className="text-neutral-700 cursor-pointer"
-              onClick={() => router.push("/login")}
-            >
-              Log in
-            </span>
-          </p>
+              <button
+                className="group relative w-full rounded-md bg-gradient-to-br from-zinc-700 to-zinc-900 px-4 py-2 text-white font-semibold shadow-md hover:from-zinc-600 hover:to-zinc-800 transition duration-300"
+                type="submit"
+              >
+                Sign Up &rarr;
+                <BottomGradient />
+              </button>
 
-          <div className="my-6 h-px bg-neutral-700" />
+              <p className="text-neutral-400 text-center text-sm mt-4">
+                Already have an account?{" "}
+                <span
+                  className="text-neutral-700 cursor-pointer"
+                  onClick={() => router.push("/login")}
+                >
+                  Log in
+                </span>
+              </p>
 
-          <div className="space-y-3">
-            <SocialButton
-              icon={<IconBrandGithub />}
-              text="Continue with GitHub"
-            />
-            <SocialButton
-              icon={<IconBrandGoogle />}
-              text="Continue with Google"
-            />
-            <SocialButton
-              icon={<IconBrandLinkedin />}
-              text="Continue with LinkedIn"
-            />
+              <div className="my-6 h-px bg-neutral-700" />
+
+              <div className="space-y-3">
+                <SocialButton
+                  icon={<IconBrandGithub />}
+                  text="Continue with GitHub"
+                />
+                <SocialButton
+                  icon={<IconBrandGoogle />}
+                  text="Continue with Google"
+                />
+                <SocialButton
+                  icon={<IconBrandLinkedin />}
+                  text="Continue with LinkedIn"
+                />
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-      <BackgroundBeams />
-    </div>
-    }
-    
+          <BackgroundBeams />
+        </div>
+      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { verifyToken } from "../services/Auth/Auth";
 import { toast } from "react-toastify";
@@ -10,9 +10,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const hasCheckedAuth = useRef(false); // 🛑 Prevent multiple calls
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (hasCheckedAuth.current) return; // Prevent second call
+      hasCheckedAuth.current = true;
+
       const token = localStorage.getItem("token");
       if (!token) {
         toast.error("Authentication failed. Please log in.");
@@ -23,7 +27,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
       try {
         const response = await verifyToken(token);
-        if (response.status === 200) {
+        if (response.status_code === 200) {
           toast.success("Authentication successful!");
           setIsAuthenticated(true);
         } else {
@@ -48,7 +52,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return null; // or a fallback
+    return null;
   }
 
   return <>{children}</>;
