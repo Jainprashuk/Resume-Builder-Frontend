@@ -55,25 +55,25 @@ export default function Page() {
 
     <>
     {
-      isLoading ? <Loader /> : <div className="relative min-h-screen flex items-center justify-center bg-neutral-950 text-white px-4">
-      <div className="w-full max-w-md rounded-xl bg-neutral-900/60 backdrop-blur border border-neutral-700 p-8 shadow-2xl z-10">
+      isLoading ? <Loader /> : <div className="relative min-h-screen flex items-center justify-center bg-white dark:bg-neutral-950 text-black dark:text-white px-4">
+      <div className="w-full max-w-md rounded-xl bg-neutral-100 dark:bg-neutral-900/60 backdrop-blur border border-neutral-300 dark:border-neutral-700 p-8 shadow-2xl z-10">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h2 className="text-3xl font-bold text-center mb-2">
             Welcome Back 👋
           </h2>
-          <p className="text-neutral-400 text-center text-sm mb-4">
+          <p className="text-neutral-600 dark:text-neutral-400 text-center text-sm mb-4">
             Log in to access your dashboard
           </p>
 
           <LabelInputContainer>
-            <Label htmlFor="email" className="text-white">
+            <Label htmlFor="email" className="text-black dark:text-white">
               Email Address
             </Label>
             <Input
               id="email"
               placeholder="projectmayhem@fc.com"
               type="email"
-              className="bg-neutral-800 text-white placeholder-neutral-500"
+              className="bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white placeholder-neutral-500"
               value={credentials.email}
               onChange={(e) =>
                 setCredentials({ ...credentials, email: e.target.value })
@@ -82,14 +82,14 @@ export default function Page() {
           </LabelInputContainer>
 
           <LabelInputContainer>
-            <Label htmlFor="password" className="text-white">
+            <Label htmlFor="password" className="text-black dark:text-white">
               Password
             </Label>
             <Input
               id="password"
               placeholder="••••••••"
               type="password"
-              className="bg-neutral-800 text-white placeholder-neutral-500"
+              className="bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white placeholder-neutral-500"
               value={credentials.password}
               onChange={(e) =>
                 setCredentials({ ...credentials, password: e.target.value })
@@ -98,24 +98,33 @@ export default function Page() {
           </LabelInputContainer>
 
           <button
-            className="group relative w-full rounded-md bg-gradient-to-br from-zinc-700 to-zinc-900 px-4 py-2 text-white font-semibold shadow-md hover:from-zinc-600 hover:to-zinc-800 transition duration-300"
+            className="group relative w-full rounded-md bg-gradient-to-br from-zinc-300 to-zinc-500 dark:from-zinc-700 dark:to-zinc-900 px-4 py-2 text-black dark:text-white font-semibold shadow-md hover:from-zinc-200 hover:to-zinc-400 dark:hover:from-zinc-600 dark:hover:to-zinc-800 transition duration-300"
             type="submit"
           >
             Log In &rarr;
             <BottomGradient />
           </button>
 
-          <p className="text-neutral-400 text-center text-sm mt-4">
+          <p className="text-neutral-600 dark:text-neutral-400 text-center text-sm mt-4">
             Don't have an account?{" "}
             <span
-              className="text-neutral-700 pointer"
+              className="text-blue-600 dark:text-neutral-300 cursor-pointer"
               onClick={() => router.push("/signup")}
             >
               Sign up
             </span>
           </p>
+          <p className="text-neutral-600 dark:text-neutral-400 text-center text-sm mt-4">
+            Forget Your Password?{" "}
+            <span
+              className="text-blue-600 dark:text-neutral-300 cursor-pointer"
+              onClick={() => router.push("/signup")}
+            >
+              Reset now
+            </span>
+          </p>
 
-          <div className="my-6 h-px bg-neutral-700" />
+          <div className="my-6 h-px bg-neutral-300 dark:bg-neutral-700" />
 
           <div className="space-y-3">
             <SocialButton
@@ -156,9 +165,9 @@ const LabelInputContainer = ({
 const BottomGradient = () => {
   return (
     <>
-      <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
-      <span className="absolute inset-x-10 -bottom-px mx-auto w-1/2 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 blur-sm group-hover:opacity-100 transition duration-500" />
-    </>
+    <span className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+    <span className="absolute inset-x-10 -bottom-px mx-auto w-1/2 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 blur-sm group-hover:opacity-100 transition duration-500" />
+  </>
   );
 };
 
@@ -171,11 +180,11 @@ const SocialButton = ({
 }) => {
   return (
     <button
-      className="flex items-center justify-center gap-3 w-full px-4 py-2 rounded-md bg-neutral-800 text-white hover:bg-neutral-700 transition duration-300 shadow-md"
-      type="button"
-    >
-      <div className="text-xl">{icon}</div>
-      <span className="text-sm font-medium">{text}</span>
-    </button>
+    className="flex items-center justify-center gap-3 w-full px-4 py-2 rounded-md bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition duration-300 shadow-md"
+    type="button"
+  >
+    <div className="text-xl">{icon}</div>
+    <span className="text-sm font-medium">{text}</span>
+  </button>
   );
 };
