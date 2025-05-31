@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <ToastContainer />
         <div className="relative w-full flex items-center justify-center ">
-          <NavbarComponent />
+          {/* <NavbarComponent /> */}
         </div>
         {children}
       </body>

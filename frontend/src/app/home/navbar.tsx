@@ -53,48 +53,16 @@ export default function NavbarComponent() {
           {/* Services */}
           <li
             className="relative cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setActiveMenu(activeMenu === "services" ? null : "services");
-            }}
-            onMouseEnter={() => setActiveMenu("services")}
-            onMouseLeave={() => setActiveMenu(null)}
+            
+              onClick={() => router.push("/")}
+          
+           
           >
             <span className="px-4 py-2 hover:text-emerald-600 dark:hover:text-emerald-400">
-              Services
+              Home
             </span>
 
-            {activeMenu === "services" && (
-              <div
-                onClick={handleMenuClick}
-                className="absolute top-full mt-2 left-0 w-48 bg-gray-100 dark:bg-zinc-700 rounded-md shadow-lg p-4 flex flex-col space-y-2 text-sm text-gray-800 dark:text-gray-300"
-              >
-                <a
-                  href="/web-dev"
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400"
-                >
-                  Web Development
-                </a>
-                <a
-                  href="/interface-design"
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400"
-                >
-                  Interface Design
-                </a>
-                <a
-                  href="/seo"
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400"
-                >
-                  Search Engine Optimization
-                </a>
-                <a
-                  href="/branding"
-                  className="hover:text-emerald-600 dark:hover:text-emerald-400"
-                >
-                  Branding
-                </a>
-              </div>
-            )}
+            
           </li>
 
           {/* Products */}
